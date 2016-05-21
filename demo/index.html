@@ -6,32 +6,41 @@
     <title>webrtc-channel Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
     <link rel="import" href="../webrtc-channel.html">
+    <link rel="import" href="../../webrtc-stream/webrtc-stream.html">
   </head>
   <body unresolved>
-
-    <p>An example of <code>&lt;webrtc-channel&gt;</code>:</p>
-
-    <p>Make words! <button id="saybtn">Say Something</button></p>
-    <p>Make lasers! <button id="laserbtn">Fire lasers</button></p>
-
-    <webrtc-channel></webrtc-channel>
-
-    <script>
-      var seedElement = document.querySelector('webrtc-channel');
-
-      document.querySelector('#saybtn').addEventListener('click', function() {
-        alert(seedElement.sayHello('Hallo!'));
-      });
-
-      document.querySelector('#laserbtn').addEventListener('click', function() {
-        seedElement.fireLasers();
-      });
-
-      document.addEventListener("webrtc-channel-lasers", function(e) {
-        console.log(e.detail.sound);
-      });
-
-    </script>
+    
+    <dom-module id="demo">
+      <template is="dom-bind" id="demo-template">
+        
+        <p>An example of <code>&lt;webrtc-channel&gt;</code>:</p>
+        
+        <p>Make words! <button id="saybtn">Say Something</button></p>
+        <p>Make lasers! <button id="laserbtn">Fire lasers</button></p>
+        
+        <webrtc-stream stream="{{s}}"></webrtc-stream>
+        Sending: {{s}}
+        <webrtc-channel send="{{s}}" receive="{{r}}"></webrtc-channel>
+        Receiving: {{r}}
+        
+        <script>
+          var seedElement = document.querySelector('webrtc-channel');
+          
+          document.querySelector('#saybtn').addEventListener('click', function() {
+            alert(seedElement.sayHello('Hallo!'));
+          });
+          
+          document.querySelector('#laserbtn').addEventListener('click', function() {
+            seedElement.fireLasers();
+          });
+          
+          document.addEventListener("webrtc-channel-lasers", function(e) {
+            console.log(e.detail.sound);
+          });
+          
+        </script>
+      </template>
+    </dom-module>
 
   </body>
 </html>

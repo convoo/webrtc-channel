@@ -1,0 +1,9 @@
+{
+  "name": "webrtc-channel",
+  "version": "0.0.1",
+  "description": "WebRTC channel element for connecting multiple clients to a common data channel.",
+  "dependencies": {
+    "node-static": "0.7.7",
+    "socket.io": "1.2.0"
+  }
+}
