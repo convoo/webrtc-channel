@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>webrtc-channel Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="import" href="../webrtc-channel.html">
+  </head>
+  <body unresolved>
+
+    <p>An example of <code>&lt;webrtc-channel&gt;</code>:</p>
+
+    <p>Make words! <button id="saybtn">Say Something</button></p>
+    <p>Make lasers! <button id="laserbtn">Fire lasers</button></p>
+
+    <webrtc-channel></webrtc-channel>
+
+    <script>
+      var seedElement = document.querySelector('webrtc-channel');
+
+      document.querySelector('#saybtn').addEventListener('click', function() {
+        alert(seedElement.sayHello('Hallo!'));
+      });
+
+      document.querySelector('#laserbtn').addEventListener('click', function() {
+        seedElement.fireLasers();
+      });
+
+      document.addEventListener("webrtc-channel-lasers", function(e) {
+        console.log(e.detail.sound);
+      });
+
+    </script>
+
+  </body>
+</html>

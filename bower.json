@@ -1,0 +1,29 @@
+{
+  "name": "webrtc-channel",
+  "version": "0.0.1",
+  "authors": [
+    "Will in China <email.will.in.china@gmail.com>",
+    "Saad Elbeleidy <sbeleidy90@gmail.com>"
+  ],
+  "description": "An element providing access to a webrtc channel connection and allowing sending and receiving data across it.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed",
+    "webrtc"
+  ],
+  "main": "webrtc-channel.html",
+  "license": "MIT",
+  "homepage": "https://github.com/convoo/webrtc-channel/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "^4.0.0"
+  }
+}

@@ -1,0 +1,95 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+An element providing access to a webrtc channel connection and allowing sending and receiving data across it.
+
+Example:
+
+    <webrtc-channel></webrtc-channel>
+
+Example:
+
+    <webrtc-channel>
+      <h2>Hello webrtc-channel</h2>
+    </webrtc-channel>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="webrtc-channel">
+  <template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'webrtc-channel',
+
+      properties: {
+        /**
+         * `fancy` indicates that the element should don a monocle and tophat,
+         * while checking its pocket watch.
+         */
+        fancy: Boolean,
+        },
+      },
+
+      // Element Lifecycle
+
+      ready: function() {
+        // `ready` is called after all elements have been configured, but
+        // propagates bottom-up. This element's children are ready, but parents
+        // are not.
+        //
+        // This is the point where you should make modifications to the DOM (when
+        // necessary), or kick off any processes the element wants to perform.
+      },
+
+      attached: function() {
+        // `attached` fires once the element and its parents have been inserted
+        // into a document.
+        //
+        // This is a good place to perform any work related to your element's
+        // visual state or active behavior (measuring sizes, beginning animations,
+        // loading resources, etc).
+      },
+
+      detached: function() {
+        // The analog to `attached`, `detached` fires when the element has been
+        // removed from a document.
+        //
+        // Use this to clean up anything you did in `attached`.
+      },
+
+      // Element Behavior
+
+      /**
+       * Sometimes it's just nice to say hi.
+       *
+       * @param {string} greeting A positive greeting.
+       * @return {string} The full greeting.
+       */
+      sayHello: function(greeting) {
+        var response = greeting || 'Hello World!';
+        return 'webrtc-channel says, ' + response;
+      },
+
+      /**
+       * The `webrtc-channel-lasers` event is fired whenever `fireLasers` is called.
+       *
+       * @event webrtc-channel-lasers
+       * @detail {{sound: String}}
+       */
+
+      /**
+       * Attempt to destroy this element's enemies with a beam of light!
+       *
+       * Or, at least, dispatch an event in the vain hope that someone else will
+       * do the zapping.
+       */
+      fireLasers: function() {
+        this.fire('webrtc-channel-lasers', {sound: 'Pew pew!'});
+      }
+    });
+  </script>
+</dom-module>
