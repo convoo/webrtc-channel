@@ -145,15 +145,15 @@ Example:
           this.isRoomReady = true;
         }.bind(this));
         // Someone is joining the room
-        this.socket.on("join", function(room){
+        this.socket.on("new user joining", function(room){
           console.log(room);
-          console.log("join");
+          console.log("new user joining");
           this.isRoomReady = true;
         }.bind(this));
         // You joined the room
-        this.socket.on("joined", function(room){
+        this.socket.on("you joined", function(room){
           console.log(room);
-          console.log("joined");
+          console.log("you joined");
           this.isRoomReady = true;
         }.bind(this));
         this.socket.on('full', function(room) {
@@ -165,9 +165,12 @@ Example:
             this._start();
           }else if(message.type === "offer"){
             console.log("We got an offer!! yay!");
+            console.log(this.startedIt);
             if(!this.startedIt && !this.hasStarted){
+              console.log("will start");
               this._start();
             }
+            console.log(this.hasStarted);
             this.local.setRemoteDescription(new RTCSessionDescription(message));
             
             this.local.createAnswer().then(function(sessionDescr){
