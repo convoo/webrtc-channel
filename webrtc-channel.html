@@ -40,7 +40,7 @@ Example:
           observer: "_onSendChanged"
         },
         /**
-         * `receive` indicates the data/stream you are receiving
+         * `receive` indicates the data/streams you are receiving
          */
         receive: {
           type: Array,
@@ -185,12 +185,20 @@ Example:
               candidate: message.candidate
             });
             this.local.addIceCandidate(candidate);
+          } else if (message === "bye"){
+            console.log("Buhbye!");
           }
           
         }.bind(this));
         this.socket.on("log", function(log){
           console.log(log);
         });
+        
+        window.onbeforeunload = function(){
+          this.socket.emit("message", "bye");
+          this.hasStarted = false;
+          this.local.close();
+        }.bind(this);
         
       },
 
@@ -232,9 +240,13 @@ Example:
       
       _handleRemoteStreamAdded: function(event) {
         console.log('Remote stream added.', event);
-        this.receive.push(event.stream)
-        console.log(this.receive);
-        this.$.test.innerHTML = event.stream.id;
+        console.log(this.receive)
+        if(this.receive.length < 1){
+          this.receive = [event.stream];
+        } else {
+          this.receive.push(event.stream)
+        }
+        console.log("Receive is",this.receive);
         // remoteVideo.src = window.URL.createObjectURL();
         // remoteStream = event.stream;
       },
@@ -275,6 +287,11 @@ Example:
             });
           }
         }
+      },
+      
+      _stop: function(){
+        this.hasStarted = false;
+        this.local.close();
       },
 
       // Element Behavior

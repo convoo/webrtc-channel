@@ -21,7 +21,11 @@
         <webrtc-stream stream="{{s}}" stream-url="{{u}}"></webrtc-stream>
         Sending: {{s.id}} , {{u}}
         <webrtc-channel send="{{s}}" receive="{{r}}" room="demo"></webrtc-channel>
-        Receiving: {{r}}
+        Receiving: 
+        
+        <template is="dom-repeat" items="{{r}}">
+          <br>{{item.id}}
+        </template>
         
         <script>
           var seedElement = document.querySelector('webrtc-channel');
