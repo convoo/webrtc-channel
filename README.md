@@ -3,6 +3,25 @@
 An element providing a starting point for your own reusable Polymer elements.
 
 
+## How it works
+
+1. When a user gives access to their stream, we start a peer connection
+1. Create User A's peerconnection with handler methods for stream and icecandidate events
+1. User B joins the room
+1. If this is User A (the one whos starts it) then we create an Offer to User B
+1. When User B gets the offer, we check if the peer connection from User B has been created, if it hasn't, we create it
+1. On User B's peer connection, we set the remote description to the description that was sent in the offer (User A's description)
+1. User B creates an answer to User A's offer which involves setting User B's localDescription and sending that in a message
+1. User A gets User B's message with its description then sets it to User A's remote Description
+
+ELI5 version:
+
+1. When a user loads the page, they join the room saying "Hi Everyone!" (Signalling server tells the room that someone new has joined)
+1. If there's no one in the room, nothing happens. The user can wait until someone joins the room.
+1. If there are people in the room, they introduce themselves. Ex. User A would go, "Hi, I'm User A" (makes an offer, sending its information)
+1. User B can then go, "Hi User A, I'm User B" (adds User A's description then answers the offer, sending its information)
+1. User A then goes "Hi User B" (adds User B's description)
+
 ## Dependencies
 
 Element dependencies are managed via [Bower](http://bower.io/). You can
