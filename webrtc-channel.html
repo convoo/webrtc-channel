@@ -19,10 +19,11 @@ Example:
 
 <dom-module id="webrtc-channel">
   <template>
-    <a href$="{{socketIp}}/socket.io/socket.io.js">Click me</a>
+    <span id="test"></span>
   </template>
-
-  <script src$="{{socketIp}}/socket.io/socket.io.js"></script>
+  
+  
+  <script src="http://localhost:8080/socket.io/socket.io.js"></script>
   <script src="bower_components/webrtc-adapter/adapter.js"></script>
   <script>
     Polymer({
@@ -42,7 +43,8 @@ Example:
          * `receive` indicates the data/stream you are receiving
          */
         receive: {
-          type: Object,
+          type: Array,
+          value: [],
           notify: true,
           reflectToAttribute: true
         },
@@ -61,6 +63,7 @@ Example:
         room: {
           type: String,
           notify: true,
+          value: "",
           reflectToAttribute: true
         },
         /**
@@ -69,7 +72,29 @@ Example:
         socketIp: {
           type: String,
           value: "http://localhost:8080"
-        }
+        },
+        /**
+         * `hasStarted` indicates whether the peer connection has started
+         */
+        hasStarted: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+        /**
+         * `startedIt` indicates whether the current user started the room
+         */
+        startedIt: {
+          type: Boolean,
+          value: false
+        },
+        /**
+         * `isRoomReady` indicates whether the room is ready for users to connect
+         */
+        isRoomReady: {
+          type: Boolean,
+          value: false
+        },
       },
 
       // Element Lifecycle
@@ -104,10 +129,69 @@ Example:
           }
         };
         
-        var socket = io.connect(this.socketIp);
+        this.socket = io.connect(this.socketIp);
         
-        this.local = new RTCPeerConnection(this.servers);
-        console.log(this.local)
+        // If the room is provided, create or join it.
+        if(this.room !== ""){
+          console.log("hello");
+          this.socket.emit("create or join", this.room);
+        }
+        
+        // Socket event handlers
+        // You created the room
+        this.socket.on("created", function(room){
+          console.log("created");
+          this.startedIt = true;
+          this.isRoomReady = true;
+        }.bind(this));
+        // Someone is joining the room
+        this.socket.on("join", function(room){
+          console.log(room);
+          console.log("join");
+          this.isRoomReady = true;
+        }.bind(this));
+        // You joined the room
+        this.socket.on("joined", function(room){
+          console.log(room);
+          console.log("joined");
+          this.isRoomReady = true;
+        }.bind(this));
+        this.socket.on('full', function(room) {
+          console.log('Room ' + room + ' is full');
+        }.bind(this));
+        this.socket.on("message",function(message){
+          console.log(message);
+          if(message === "got user media"){
+            this._start();
+          }else if(message.type === "offer"){
+            console.log("We got an offer!! yay!");
+            if(!this.startedIt && !this.hasStarted){
+              this._start();
+            }
+            this.local.setRemoteDescription(new RTCSessionDescription(message));
+            
+            this.local.createAnswer().then(function(sessionDescr){
+              this.local.setLocalDescription(sessionDescr);
+              this.socket.emit("message", sessionDescr);
+            }.bind(this), function(err){
+              console.log(err);
+            });
+            
+          } else if (message.type === "answer" && this.hasStarted){
+            this.local.setRemoteDescription(new RTCSessionDescription(message));
+          } else if (message.type === "candidate" && this.hasStarted){
+            var candidate = new RTCIceCandidate({
+              sdpMLineIndex: message.label,
+              candidate: message.candidate
+            });
+            this.local.addIceCandidate(candidate);
+          }
+          
+        }.bind(this));
+        this.socket.on("log", function(log){
+          console.log(log);
+        });
+        
       },
 
       detached: function() {
@@ -118,11 +202,79 @@ Example:
       },
       
       _onSendChanged: function(newVal, oldVal){
+        // If the value is changing from null to something 
+        // then this assumes we just got access to user media/user data
+        if(oldVal == null){
+          console.log("was null");
+          this.socket.emit("message", "got user media");
+          this._start();
+        }
         // console.log(newVal);
         
         // console.log(newVal.getVideoTracks());
         
         // console.log(newVal.getAudioTracks());
+      },
+      
+      // WEBRTC Functions
+      _handleIceCandidate: function(event){
+        if (event.candidate) {
+          this.socket.emit("message",{
+            type: 'candidate',
+            label: event.candidate.sdpMLineIndex,
+            id: event.candidate.sdpMid,
+            candidate: event.candidate.candidate
+          });
+        } else {
+          console.log('End of candidates.');
+        }
+      },
+      
+      _handleRemoteStreamAdded: function(event) {
+        console.log('Remote stream added.', event);
+        this.receive.push(event.stream)
+        console.log(this.receive);
+        this.$.test.innerHTML = event.stream.id;
+        // remoteVideo.src = window.URL.createObjectURL();
+        // remoteStream = event.stream;
+      },
+      
+      _handleRemoteStreamRemoved: function(event) {
+        console.log('Remote stream removed.', event);
+        // remoteVideo.src = window.URL.createObjectURL();
+        // remoteStream = event.stream;
+      },
+
+      _handleCreateOfferError: function(event) {
+        console.log('createOffer() error: ', event);
+      },
+      
+      _start: function(){
+        console.log("attempting to start");
+        console.log(this.hasStarted);
+        console.log(typeof(this.send));
+        console.log(this.isRoomReady);
+        if(!this.hasStarted && typeof(this.send) != 'undefined' && this.isRoomReady){
+          console.log("starting");
+          this.local = new RTCPeerConnection(this.servers);
+          this.local.onicecandidate = this._handleIceCandidate.bind(this);
+          this.local.onaddstream = this._handleRemoteStreamAdded.bind(this);
+          this.local.onremovestream = this._handleRemoteStreamRemoved;
+          
+          this.local.addStream(this.send);
+          
+          this.hasStarted = true;
+          console.log(this.local);
+          
+          if(this.startedIt){
+            this.local.createOffer(function(sessionDescr){
+              this.local.setLocalDescription(sessionDescr);
+              this.socket.emit("message", sessionDescr);
+            }.bind(this), function(err){
+              console.log(err);
+            });
+          }
+        }
       },
 
       // Element Behavior

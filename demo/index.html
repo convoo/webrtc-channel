@@ -18,9 +18,9 @@
         <p>Make words! <button id="saybtn">Say Something</button></p>
         <p>Make lasers! <button id="laserbtn">Fire lasers</button></p>
         
-        <webrtc-stream stream="{{s}}"></webrtc-stream>
-        Sending: {{s}}
-        <webrtc-channel send="{{s}}" receive="{{r}}"></webrtc-channel>
+        <webrtc-stream stream="{{s}}" stream-url="{{u}}"></webrtc-stream>
+        Sending: {{s.id}} , {{u}}
+        <webrtc-channel send="{{s}}" receive="{{r}}" room="demo"></webrtc-channel>
         Receiving: {{r}}
         
         <script>
