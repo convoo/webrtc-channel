@@ -14,13 +14,23 @@ An element providing a starting point for your own reusable Polymer elements.
 1. User B creates an answer to User A's offer which involves setting User B's localDescription and sending that in a message
 1. User A gets User B's message with its description then sets it to User A's remote Description
 
-ELI5 version:
+### ELI5 version
 
-1. When a user loads the page, they join the room saying "Hi Everyone!" (Signalling server tells the room that someone new has joined)
-1. If there's no one in the room, nothing happens. The user can wait until someone joins the room.
-1. If there are people in the room, they introduce themselves. Ex. User A would go, "Hi, I'm User A" (makes an offer, sending its information)
-1. User B can then go, "Hi User A, I'm User B" (adds User A's description then answers the offer, sending its information)
-1. User A then goes "Hi User B" (adds User B's description)
+1. When anyone enters the shop a buzzer sounds.
+1. Jack enters the shop and the buzzer sounds
+1. The shop is empty so Jack waits patiently.
+1. Jill enters the shop, again the buzzer sounds.
+1. Jack hears the buzzer, goes to the door and hands his business card to Jill.
+1. Jill looks at his business card and records the information to her phone.
+1. Jill then gives Jack her business card.
+1. Jack records her information in to his phone.
+
+Representations
+
+* Jack and Jill represent the two people in the call
+* The buzzer represents the signaling server
+* The business card represents the RTCSessionDescription
+* The phone represents the RTCPeerConnection 
 
 ## Dependencies
 
